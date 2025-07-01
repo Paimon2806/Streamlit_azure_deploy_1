@@ -1,1 +1,5 @@
 .env
+.venv
+huggingface.py
+genai_streamlit.yml
+.idea
