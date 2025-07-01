@@ -19,39 +19,41 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # --- START: Changes for Conda integration ---
+      # --- START: Fixed Changes for Conda integration ---
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v2 # Use a specific version if preferred, e.g., @v2.1.1
         with:
           miniconda-version: "latest"      # Installs the latest Miniconda
           python-version: 3.9              # Specifies the Python version for the base environment
           auto-update-conda: true          # Ensures Conda is up-to-date
-          auto-activate-base: true         # Activates the base environment automatically
+          # auto-activate-base is not strictly needed here as we'll activate a specific env
 
-      - name: Create and activate Conda environment
+      - name: Create Conda environment and install dependencies
         run: |
+          # Explicitly source the conda.sh script to initialize conda for this shell session.
+          # This resolves the "CondaError: Run 'conda init' before 'conda activate'" issue.
+          source $(conda info --base)/etc/profile.d/conda.sh
+
           # Create a new conda environment named 'streamlit_env' with Python 3.9
           conda create --name streamlit_env python=3.9 -y
+
           # Activate the newly created environment
-          conda init
           conda activate streamlit_env
 
-      - name: Install dependencies with Conda
-        run: |
-          # Ensure the correct conda environment is activated for this step
-          conda activate streamlit_env
           # Install packages from requirements.txt using conda
           # The '-y' flag automatically answers yes to prompts
           conda install --file requirements.txt -y
           # If your packages require specific channels (e.g., conda-forge),
           # uncomment and modify the line below:
           # conda install --file requirements.txt -c conda-forge -c defaults -y
-      # --- END: Changes for Conda integration ---
+      # --- END: Fixed Changes for Conda integration ---
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       # Ensure the Conda environment is active if tests depend on installed packages
       # - name: Run tests
       #   run: |
+      #     # Activate the environment again if this is a separate 'run' block
+      #     source $(conda info --base)/etc/profile.d/conda.sh
       #     conda activate streamlit_env
       #     pytest
 
