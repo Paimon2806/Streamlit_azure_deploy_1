@@ -33,6 +33,7 @@ jobs:
           # Create a new conda environment named 'streamlit_env' with Python 3.9
           conda create --name streamlit_env python=3.9 -y
           # Activate the newly created environment
+          conda init
           conda activate streamlit_env
 
       - name: Install dependencies with Conda
